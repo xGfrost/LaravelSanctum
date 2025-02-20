@@ -17,10 +17,20 @@ class PostController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Post::all();
+
+        $query = Post::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $searchTerm = $request->get('search');
+            $query->where('title', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('body', 'like', '%' . $searchTerm . '%');
+        }
+        return $query->get();
     }
+
+    
 
     /**
      * Store a newly created resource in storage.
@@ -39,9 +49,15 @@ class PostController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show($id)
     {
-        return $post;
+        $post = Post::find($id);
+
+        if (!$post) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
+
+        return response()->json($post);
     }
 
     /**
