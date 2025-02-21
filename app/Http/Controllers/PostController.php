@@ -27,7 +27,15 @@ class PostController extends Controller implements HasMiddleware
             $query->where('title', 'like', '%' . $searchTerm . '%')
                   ->orWhere('body', 'like', '%' . $searchTerm . '%');
         }
-        return $query->get();
+        
+        $posts = $query->get();
+
+        // Tambahkan photo_url ke setiap post
+        $posts->each(function ($post) {
+            $post->photo_url = asset('storage/' . $post->photo);
+        });
+    
+        return $posts;
     }
 
     
@@ -59,6 +67,7 @@ class PostController extends Controller implements HasMiddleware
     public function show($id)
     {
         $post = Post::find($id);
+        $post->photo_url = asset('storage/' . $post->photo);
 
         if (!$post) {
             return response()->json(['message' => 'Post not found'], 404);
