@@ -40,7 +40,14 @@ class PostController extends Controller implements HasMiddleware
         $fields = $request->validate([
             'title'=>'required|max:255',
             'body'=>'required',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos', 'public');
+            $fields['photo'] = $photoPath;
+        }
+
        $post = $request->user()->posts()->create($fields);
 
         return $post;
@@ -69,7 +76,14 @@ class PostController extends Controller implements HasMiddleware
         $fields = $request->validate([
             'title'=>'required|max:255',
             'body'=>'required',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos', 'public');
+            $fields['photo'] = $photoPath;
+        }
+
        $post->update($fields);
 
         return $post;
