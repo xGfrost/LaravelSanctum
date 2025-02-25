@@ -30,7 +30,6 @@ class PostController extends Controller implements HasMiddleware
         
         $posts = $query->with('user')->get();
 
-        // Tambahkan photo_url ke setiap post
         $posts->each(function ($post) {
             $post->photo_url = asset('storage/' . $post->photo);
             $post->username = $post->user->username;
@@ -41,9 +40,6 @@ class PostController extends Controller implements HasMiddleware
 
     
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $fields = $request->validate([
@@ -62,9 +58,6 @@ class PostController extends Controller implements HasMiddleware
         return $post;
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
         $post = Post::with('user')->find($id);
@@ -78,9 +71,6 @@ class PostController extends Controller implements HasMiddleware
         return response()->json($post);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Post $post)
     {
         Gate::authorize('modify', $post);
@@ -100,9 +90,6 @@ class PostController extends Controller implements HasMiddleware
         return $post;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Post $post)
     {
         Gate::authorize('modify', $post);
