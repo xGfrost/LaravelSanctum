@@ -25,26 +25,26 @@ class PostController extends Controller implements HasMiddleware
         if ($request->has('search') && $request->search != '') {
             $searchTerm = $request->get('search');
             $query->where('title', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('body', 'like', '%' . $searchTerm . '%');
+                ->orWhere('body', 'like', '%' . $searchTerm . '%');
         }
-        
+
         $posts = $query->with('user')->get();
 
         $posts->each(function ($post) {
             $post->photo_url = asset('storage/' . $post->photo);
             $post->username = $post->user->username;
         });
-    
+
         return response()->json($posts);
     }
 
-    
+
 
     public function store(Request $request)
     {
         $fields = $request->validate([
-            'title'=>'required|max:255',
-            'body'=>'required',
+            'title' => 'required|max:255',
+            'body' => 'required',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -53,7 +53,7 @@ class PostController extends Controller implements HasMiddleware
             $fields['photo'] = $photoPath;
         }
 
-       $post = $request->user()->posts()->create($fields);
+        $post = $request->user()->posts()->create($fields);
 
         return $post;
     }
@@ -75,8 +75,8 @@ class PostController extends Controller implements HasMiddleware
     {
         Gate::authorize('modify', $post);
         $fields = $request->validate([
-            'title'=>'required|max:255',
-            'body'=>'required',
+            'title' => 'required|max:255',
+            'body' => 'required',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -85,7 +85,7 @@ class PostController extends Controller implements HasMiddleware
             $fields['photo'] = $photoPath;
         }
 
-       $post->update($fields);
+        $post->update($fields);
 
         return $post;
     }
